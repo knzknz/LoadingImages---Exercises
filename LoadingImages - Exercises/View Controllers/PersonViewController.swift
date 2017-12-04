@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+//TO ASK: Ask how to change the thumbnail image sizes
 class PersonViewController: UIViewController {
 
     @IBOutlet weak var tableView: UITableView!
@@ -21,10 +21,12 @@ class PersonViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.dataSource = self
+        self.tableView.delegate = self
         self.tableView.rowHeight = 100
         loadPersonData()
     }
 
+//call the completion handler to load all the random people
 func loadPersonData() {
     let urlStr = "https://randomuser.me/api/?results=50"
     let setPersonToOnlinePerson: ([PersonDetails]) -> Void = {(onlinePerson: [PersonDetails]) in
@@ -36,12 +38,16 @@ func loadPersonData() {
 }
     
     // MARK: - Navigation
-    //override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-    //    if let destination = segue.destination as? PersonDetailViewController {
-    //
-    //        destination.clickedPerson = personsArr[self.tableView.indexPathForSelectedRow!.row]
-    //    }
-    //}
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let destination = segue.destination as? PersonDetailViewController {
+    
+            destination.clickedPerson = personArr[self.tableView.indexPathForSelectedRow!.row]
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        performSegue(withIdentifier: "Person Detail Segue", sender: indexPath)
+    }
     
 }
 
@@ -58,7 +64,7 @@ extension PersonViewController: UITableViewDelegate, UITableViewDataSource {
         cell.nameLabel.text = "Name: \(person.name.first)"
         cell.ageLabel.text = "Age: \(person.dob)"
         cell.cellPhoneLabel.text = "Cell:\(person.cell)"
-        //To load the image from the url
+        //Call the completion handler to load the theumbnail image from the url
         guard let imageUrlStr = person.picture?.thumbnail else {
             return cell
         }

@@ -10,29 +10,37 @@ import UIKit
 
 class PersonDetailViewController: UIViewController {
     
-    var clickedPerson: Person!
+    @IBOutlet weak var largeImage: UIImageView!
+    @IBOutlet weak var nameLabel: UILabel!
+    @IBOutlet weak var ageLabel: UILabel!
+    @IBOutlet weak var cellLabel: UILabel!
+    //@IBOutlet weak var otherNumberlabel: UILabel!
+    @IBOutlet weak var locationLabel: UILabel!
+    
+    
+    var clickedPerson: PersonDetails!
 
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        nameLabel.text = "\(clickedPerson.name.first) " + "\(clickedPerson.name.last)"
+        ageLabel.text = clickedPerson.dob
+        cellLabel.text = clickedPerson.cell
+        locationLabel.text = "\(clickedPerson.location.street)"
+        loadImage()
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    //Need to call the completion handler for the large image
+    func loadImage() {
+        guard let imageURLStr = clickedPerson.picture?.large else {
+            return
+        }
+        let completion: (UIImage) -> Void = {(onlineImage: UIImage) in
+            self.largeImage.image = onlineImage
+            self.largeImage.setNeedsLayout()
+        }
+        ImageAPIClient.manager.getImage(from: imageURLStr,
+                                        completionHandler: completion,
+                                        errorHandler: {print($0)})
     }
-    */
-
 }
